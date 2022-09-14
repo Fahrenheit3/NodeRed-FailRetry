@@ -1,0 +1,221 @@
+[
+    {
+        "id": "302b0e8245331265",
+        "type": "subflow",
+        "name": "Subflow 14",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 80,
+                "y": 240,
+                "wires": [
+                    {
+                        "id": "c6e190a1b64cd1e9"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 980,
+                "y": 140,
+                "wires": [
+                    {
+                        "id": "07e230f5e83ffa2b",
+                        "port": 0
+                    },
+                    {
+                        "id": "aecd479a77e1c9f6",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 980,
+                "y": 240,
+                "wires": [
+                    {
+                        "id": "07e230f5e83ffa2b",
+                        "port": 1
+                    },
+                    {
+                        "id": "aecd479a77e1c9f6",
+                        "port": 1
+                    }
+                ]
+            },
+            {
+                "x": 980,
+                "y": 340,
+                "wires": [
+                    {
+                        "id": "07e230f5e83ffa2b",
+                        "port": 2
+                    },
+                    {
+                        "id": "aecd479a77e1c9f6",
+                        "port": 2
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "Condition",
+                "type": "num",
+                "value": "403",
+                "ui": {
+                    "icon": "font-awesome/fa-sort-numeric-asc"
+                }
+            },
+            {
+                "name": "Number of Retries",
+                "type": "num",
+                "value": "10",
+                "ui": {
+                    "icon": "font-awesome/fa-exclamation"
+                }
+            },
+            {
+                "name": "Variable to Check",
+                "type": "str",
+                "value": "statusCode"
+            },
+            {
+                "name": "Condition Type",
+                "type": "str",
+                "value": "Fail",
+                "ui": {
+                    "type": "select",
+                    "opts": {
+                        "opts": [
+                            {
+                                "l": {
+                                    "en-US": "Fail"
+                                },
+                                "v": "Fail"
+                            },
+                            {
+                                "l": {
+                                    "en-US": "Success"
+                                },
+                                "v": "Success"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "07e230f5e83ffa2b",
+        "type": "function",
+        "z": "302b0e8245331265",
+        "name": "",
+        "func": "\nlet msg1; // Output 1 -> Fail but keep trying\nlet msg2; // Output 2 -> Success\nlet msg3; // Output 3 -> Failed too much, error output. (System Stops)\n\nif(msg.checkOne !== msg[msg.checkThree] && msg.failCounter !== msg.checkTwo){\n    msg.failCounter = msg.failCounter + 1;\n    msg1 = msg;\n} else if(msg.checkOne === msg[msg.checkThree]){\n    msg2 = msg;\n} else {\n    msg.payload = \"Too much error!!\"\n    msg3 = msg;\n}\n\n\nreturn [msg1, msg2, msg3];",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 420,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "c6e190a1b64cd1e9",
+        "type": "change",
+        "z": "302b0e8245331265",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "checkOne",
+                "pt": "msg",
+                "to": "Condition",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "checkTwo",
+                "pt": "msg",
+                "to": "Number of Retries",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "checkThree",
+                "pt": "msg",
+                "to": "Variable to Check",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "checkFour",
+                "pt": "msg",
+                "to": "Condition Type",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 220,
+        "y": 240,
+        "wires": [
+            [
+                "0988cb07d7d07051"
+            ]
+        ]
+    },
+    {
+        "id": "aecd479a77e1c9f6",
+        "type": "function",
+        "z": "302b0e8245331265",
+        "name": "",
+        "func": "\nlet msg1; // Output 1 -> Fail but keep trying\nlet msg2; // Output 2 -> Success\nlet msg3; // Output 3 -> Failed too much, error output. (System Stops)\n\nif(msg.checkOne === msg[msg.checkThree] && msg.failCounter !== msg.checkTwo){\n    msg.failCounter = msg.failCounter + 1;\n    msg1 = msg;\n} else if(msg.checkOne !== msg[msg.checkThree]){\n    msg2 = msg;\n} else {\n    msg.payload = \"Too much error!!\"\n    msg3 = msg;\n}\n\n\nreturn [msg1, msg2, msg3];",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 60,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "0988cb07d7d07051",
+        "type": "function",
+        "z": "302b0e8245331265",
+        "name": "",
+        "func": "\nlet msg1;\nlet msg2;\n\nif(msg.checkFour === \"Fail\"){\n    msg1 = msg;\n} else if(msg.checkFour === \"Success\") {\n    msg2 = msg;\n}\n\nreturn [msg1, msg2];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 240,
+        "wires": [
+            [
+                "aecd479a77e1c9f6"
+            ],
+            [
+                "07e230f5e83ffa2b"
+            ]
+        ]
+    }
+]
